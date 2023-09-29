@@ -1,5 +1,5 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { Resolver, ResolverOptions } from "react-hook-form";
 
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import InfoIcon from "@mui/icons-material/Info";
@@ -23,23 +23,20 @@ import InputMask from "react-input-mask";
 import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
 import { useLocalStorage } from "usehooks-ts";
 
-import FormTitle from "../../../components/PageTitle";
+//import FormTitle from "../../../components/FormTitle";
 
 import { findBrazilianZipCode } from "../../../services/api";
+
+import { UserSchema } from "../schemas/UserSchema";
 
 import { User } from "../types/User";
 
 export default function Form() {
+  const [zipCodeFounded, setZipCodeFounded] = useState<boolean>();
+
   const [users, setUsers] = useLocalStorage<User[]>("users", []);
   const { id } = useParams();
   const navigate = useNavigate();
-
-  const schema = yup.object().shape({
-    regional: yup.object().shape({
-      id: yup.string().required(),
-      nome: yup.string().required(),
-    }),
-  });
 
   const {
     control,
@@ -49,10 +46,8 @@ export default function Form() {
     setFocus,
     setValue,
   } = useForm<User>({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(UserSchema) as unknown as Resolver<User, object>,
   });
-
-  const [zipCodeFounded, setZipCodeFounded] = useState<boolean>();
 
   const onSubmit = (data: User) => {
     // registra o usuário
@@ -177,7 +172,7 @@ export default function Form() {
         />
       </Stack>
 
-      <FormTitle title="Endereço" />
+      {/*<FormTitle title="Endereço" />*/}
 
       <Stack
         direction="row"
